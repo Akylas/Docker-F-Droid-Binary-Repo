@@ -3,10 +3,11 @@ FROM runmymind/docker-android-sdk:alpine-lazydl
 EXPOSE 80
 
 # install my SDK Packages
-COPY mypackagelist/package-list.txt /opt/tools/package-list-minimal.txt
-RUN chmod a+rw /opt/tools/package-list-minimal.txt
-RUN ls -l /opt/tools/package-list-minimal.txt
-RUN /opt/tools/entrypoint.sh built-in
+COPY mypackagelist/package-list.txt /opt/tools/package-list.txt
+RUN chmod a+rw /opt/tools/package-list.txt
+RUN ls -l /opt/tools/package-list.txt
+RUN cat /opt/tools/package-list.txt
+RUN /opt/tools/entrypoint.sh lazy-dl
 
 # install python
 RUN apk add --update --no-cache python3 python3-dev py3-pip rsync && ln -sf python3 /usr/bin/python
