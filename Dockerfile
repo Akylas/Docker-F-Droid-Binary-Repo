@@ -1,29 +1,39 @@
-FROM debian:latest
+FROM runmymind/docker-android-sdk:alpine-lazydl
 
 EXPOSE 80
 
-ARG DEBIAN_FRONTEND=noninteractive
+# install my SDK Packages
+COPY mypackagelist/package-list.txt /opt/tools/package-list-minimal.txt
+RUN chmod a+rw /opt/tools/package-list-minimal.txt
+RUN ls -l /opt/tools/package-list-minimal.txt
+RUN /opt/tools/entrypoint.sh built-in
 
-RUN apt-get update && apt-get install -y \
-  androguard \
-  apksigner \
-  fastjar \
-  jarwrapper \
-  openjdk-11-jdk \
-  python3-defusedxml \
-  python3-git \
-  python3-paramiko \
-  python3-pyasn1-modules \
-  python3-qrcode \
-  python3-requests \
-  python3-ruamel.yaml \
-  python3-yaml \
-  nginx \
-  && rm -rf /var/lib/apt/lists/*
-RUN rm /etc/nginx/sites-enabled/default
+# install python
+RUN apk add --update --no-cache python3 python3-dev py3-pip rsync && ln -sf python3 /usr/bin/python
 
-WORKDIR /app
-RUN git clone https://gitlab.com/fdroid/fdroidserver.git
+# install gcc needed to build fdroidserver
+RUN apk add --no-cache build-base
+
+RUN apk add freetype-dev \
+        libpng-dev \
+        libffi-dev \
+        jpeg-dev
+
+# install the fdroidserver
+RUN python3 -m pip install --no-cache-dir --upgrade setuptools pip && \
+    python3 -m pip install --no-cache-dir wheel && \
+    python3 -m pip install --no-cache-dir fdroidserver
+
+# install nginx for fdroid server
+RUN apk add nginx
+RUN apk del build-base
+
+RUN python3 -m pip cache purge
+# RUN apk cache clean
+# RUN rm /etc/nginx/sites-enabled/default
+
+# Workaround for non writeable SDK FOLDER
+# RUN chmod -R g+rw /opt/android-sdk-linux
 
 COPY . /
 
