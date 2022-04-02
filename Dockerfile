@@ -54,7 +54,7 @@ RUN yes | sdkmanager --licenses
 RUN sdkmanager "build-tools;30.0.3" && rm -fr $ANDROID_HOME/emulator
 
 WORKDIR /app
-RUN git clone https://gitlab.com/fdroid/fdroidserver.git
+RUN git clone https://github.com/farfromrefug/fdroidserver.git
 
 COPY . /
 
