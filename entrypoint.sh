@@ -33,7 +33,7 @@ fdroid  update -c --rename-apks --use-date-from-apk || exit
 
 foobar_re='SourceCode: ([^\
 ]*)'
-for entry in `ls metadata`; do
+for entry in `ls metadata/*.yml`; do
     s=`basename $entry .yml`
     echo "building to init git clone for $s"
     fdroid  build $s

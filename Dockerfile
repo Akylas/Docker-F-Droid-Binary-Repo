@@ -51,7 +51,11 @@ RUN mkdir -p $ANDROID_HOME/cmdline-tools && \
 RUN yes | sdkmanager --licenses
 
 # install android tools
-RUN sdkmanager "build-tools;30.0.3" && rm -fr $ANDROID_HOME/emulator $ANDROID_HOME/platform-tools $ANDROID_HOME/tools
+RUN sdkmanager "build-tools;30.0.3" && rm -fr $ANDROID_HOME/emulator
+
+WORKDIR /app
+RUN git clone https://gitlab.com/fdroid/fdroidserver.git
+
 COPY . /
 
 CMD ["/entrypoint.sh"]
